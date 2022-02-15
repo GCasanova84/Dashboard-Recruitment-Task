@@ -1,14 +1,13 @@
-import { createStore, combineReducers, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
+import { setupListeners } from '@reduxjs/toolkit/dist/query';
+import { usersApi } from '../services/users';
 
-import { usersReducer } from '../reducers/usersReducer';
-
-const reducers = combineReducers({
-    users: usersReducer
+export const store = configureStore({
+    reducer: {
+        [usersApi.reducerPath]: usersApi.reducer
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(usersApi.middleware)
 });
 
-
-export const store = createStore(
-    reducers,
-    applyMiddleware( thunk )
-);
+setupListeners(store.dispatch);

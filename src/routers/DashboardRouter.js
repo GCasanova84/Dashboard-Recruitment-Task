@@ -1,22 +1,11 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
-
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-
-import { getUsers } from '../actions/users';
 import { DashboardPage } from '../components/dashboard/DashboardPage';
 import { EditUserPage } from '../components/edit_user/EditUserPage';
 import { AddUserPage } from '../components/add_user/AddUserPage';
 
 export const DashboardRouter = () => {
-
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        dispatch(getUsers());
-    }, [dispatch]);
 
     return (
         <BrowserRouter>

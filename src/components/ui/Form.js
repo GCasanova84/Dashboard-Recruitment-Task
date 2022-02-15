@@ -1,23 +1,22 @@
-import * as React from 'react';
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
-import { useNavigate } from "react-router-dom";
 import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
 import { lightGreen, red } from '@mui/material/colors';
-
 import { CustomButton } from './CustomButton';
 import { OutlinedCustomButton } from './OutlinedCustomButton';
 import { useForm } from '../../hooks/useForm';
-import { editUser, addUser } from '../../actions/users';
+import { useAddUserMutation, useUpdateUserMutation } from "../../services/users";
 
 export const Form = ({ user = {} }) => {
 
+    const [editUser] = useUpdateUserMutation();
+    const [addUser] = useAddUserMutation();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
+    
     const handleCancel = () => {
         navigate('/dashboard')
     }
@@ -46,13 +45,13 @@ export const Form = ({ user = {} }) => {
                 },
             },
         },
-        onSubmit: () => {
+        onSubmit: async () => {
             if (Object.keys(user).length > 0) {
-                dispatch(editUser(data))
-                    .then(() => navigate('/dashboard'))
+                await editUser(data)
+                navigate('/dashboard');
             } else {
-                dispatch(addUser(data))
-                    .then(() => navigate('/dashboard'))
+                await addUser(data)
+                navigate('/dashboard');
             }
         },
         initialValues: {

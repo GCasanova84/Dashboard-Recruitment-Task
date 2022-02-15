@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import { red, amber, blue, deepOrange, blueGrey } from '@mui/material/colors';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -11,26 +12,19 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Divider from '@mui/material/Divider';
-import { useNavigate } from "react-router-dom";
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useDispatch } from 'react-redux';
-
+import { red, amber, blue, deepOrange, blueGrey } from '@mui/material/colors';
 import { CustomButton } from '../../ui/CustomButton';
-import { deleteUser } from '../../../actions/users';
-
-
-
+import { useDeleteUserMutation } from '../../../services/users';
 
 export const UsersTable = ({ users }) => {
 
     const [open, setOpen] = useState(false);
     const [userId, setUserId] = useState({});
-
-    const dispatch = useDispatch();
 
     const handleClickOpen = (e) => {
         setOpen(true);
@@ -43,18 +37,22 @@ export const UsersTable = ({ users }) => {
 
     const navigate = useNavigate();
 
-    const handleEdit = (e) => {
-        navigate(`/dashboard/edit/user_${e.target.value}`, { state: { id: e.target.value } })
+    const handleEdit = (user) => {
+        navigate(`/dashboard/edit/user_${user.id}`, { state: { user: user } })
     }
 
-    const handleDelete = () => {
-        dispatch(deleteUser(userId))
-            .then(() => handleClose())
+    const [deleteUser] = useDeleteUserMutation();
+
+    const handleDelete = async () => {
+        await deleteUser(userId)
+        handleClose()
     }
 
     const handleAdd = () => {
         navigate('/dashboard/add_user')
     }
+
+    console.log(users);
 
     return (
         <>
@@ -94,7 +92,7 @@ export const UsersTable = ({ users }) => {
                                         <TableCell align="center">{user.email}</TableCell>
                                         <TableCell align="center">{user.address?.city || '--'}</TableCell>
                                         <TableCell align="center">
-                                            <CustomButton variant="contained" c={amber} value={user.id} onClick={handleEdit}>edit</CustomButton>
+                                            <CustomButton variant="contained" c={amber} onClick={() => handleEdit(user)}>edit</CustomButton>
                                         </TableCell>
                                         <TableCell align="center">
                                             <CustomButton variant="contained" c={red} value={user.id} onClick={handleClickOpen}>delete</CustomButton>
